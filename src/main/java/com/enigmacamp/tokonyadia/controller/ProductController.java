@@ -1,44 +1,51 @@
 package com.enigmacamp.tokonyadia.controller;
 
-import com.enigmacamp.tokonyadia.model.Products;
+import com.enigmacamp.tokonyadia.dto.request.ProductRequest;
+import com.enigmacamp.tokonyadia.dto.response.ProductResponse;
+import com.enigmacamp.tokonyadia.model.Product;
 import com.enigmacamp.tokonyadia.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Qualifier(value = "product")
 @RequestMapping("/api/v1/product")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductController {
 
-    List<Products> products;
     private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    @DeleteMapping("/delete-product")
+    public void deleteProduct(@RequestParam(name = "name") String name) {
+        productService.deleteProduct(name);
+    }
+
+    @GetMapping("/product")
+    public ProductResponse getProductByName(@RequestParam(name = "name") String name) {
+        Product product = productService.getProductByName(name);
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setName(product.getName());
+        productResponse.setPrice(product.getPrice());
+        productResponse.setStock(product.getStock());
+        return productResponse;
     }
 
     @GetMapping("/all-products")
-    public List<Products> getAllProduct() {
+    public List<ProductResponse> getAllProduct() {
         return productService.getAllProducts();
     }
 
     @PostMapping("/add-product")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addProduct(@RequestBody Products product) {
-        productService.addProduct(product);
+    public ProductResponse addProduct(@RequestBody ProductRequest request) {
+        return productService.createProduct(request);
     }
 
-    @PutMapping("/update-product/{id}")
-    public void updateProduct(@PathVariable Long id) {
-        Products updatedProduct = products.stream().filter(product -> product.getId().equals(id)).findFirst().orElseThrow();
-        productService.updateProduct(updatedProduct);
-    }
-
-    @DeleteMapping("/delete-product/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @PutMapping("/update-product")
+    public ProductResponse updateProduct(@RequestParam(name = "name") String name, @RequestBody ProductRequest request) {
+        return productService.updateProduct(name, request);
     }
 }

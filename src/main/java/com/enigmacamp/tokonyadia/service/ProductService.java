@@ -1,35 +1,19 @@
 package com.enigmacamp.tokonyadia.service;
 
-import com.enigmacamp.tokonyadia.model.Products;
-import com.enigmacamp.tokonyadia.repository.ProductRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.enigmacamp.tokonyadia.dto.request.ProductRequest;
+import com.enigmacamp.tokonyadia.dto.response.ProductResponse;
+import com.enigmacamp.tokonyadia.model.Product;
 
 import java.util.List;
 
-@Service
-public class ProductService {
+public interface ProductService {
+    ProductResponse createProduct(ProductRequest request);
 
-    private final ProductRepo productRepo;
+    ProductResponse updateProduct(String name, ProductRequest request);
 
-    @Autowired
-    public ProductService(ProductRepo productRepo) {
-        this.productRepo = productRepo;
-    }
+    void deleteProduct(String name);
 
-    public void addProduct(Products product){
-        productRepo.save(product);
-    }
+    Product getProductByName(String name);
 
-    public void updateProduct(Products product){
-        productRepo.save(product);
-    }
-
-    public List<Products> getAllProducts(){
-        return productRepo.findAll();
-    }
-
-    public void deleteProduct(Long id){
-        productRepo.deleteById(id);
-    }
+    List<ProductResponse> getAllProducts();
 }
