@@ -1,8 +1,7 @@
 package com.enigmacamp.tokonyadia.service;
 
-import com.enigmacamp.tokonyadia.dto.request.ProductRequest;
-import com.enigmacamp.tokonyadia.dto.response.ProductResponse;
-import com.enigmacamp.tokonyadia.model.Product;
+import com.enigmacamp.tokonyadia.model.dto.request.ProductRequest;
+import com.enigmacamp.tokonyadia.model.entities.Product;
 
 import java.util.List;
 

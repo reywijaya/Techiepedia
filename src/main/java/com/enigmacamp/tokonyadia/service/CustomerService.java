@@ -1,7 +1,7 @@
 package com.enigmacamp.tokonyadia.service;
 
-import com.enigmacamp.tokonyadia.dto.request.CustomerRequest;
-import com.enigmacamp.tokonyadia.model.Customer;
+import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
+import com.enigmacamp.tokonyadia.model.entities.Customer;
 
 import java.util.List;
 

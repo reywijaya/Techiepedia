@@ -1,14 +1,11 @@
 package com.enigmacamp.tokonyadia.controller;
 
-import com.enigmacamp.tokonyadia.dto.request.TransactionRequest;
-import com.enigmacamp.tokonyadia.dto.response.TransactionResponse;
+import com.enigmacamp.tokonyadia.model.dto.request.TransactionRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.TransactionResponse;
 import com.enigmacamp.tokonyadia.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Qualifier("transaction")

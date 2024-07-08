@@ -1,11 +1,11 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
-import com.enigmacamp.tokonyadia.dto.request.TransactionRequest;
-import com.enigmacamp.tokonyadia.dto.response.TransactionResponse;
-import com.enigmacamp.tokonyadia.model.Customer;
-import com.enigmacamp.tokonyadia.model.Product;
-import com.enigmacamp.tokonyadia.model.Transaction;
-import com.enigmacamp.tokonyadia.model.TransactionDetail;
+import com.enigmacamp.tokonyadia.model.dto.request.TransactionRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.TransactionResponse;
+import com.enigmacamp.tokonyadia.model.entities.Customer;
+import com.enigmacamp.tokonyadia.model.entities.Product;
+import com.enigmacamp.tokonyadia.model.entities.Transaction;
+import com.enigmacamp.tokonyadia.model.entities.TransactionDetail;
 import com.enigmacamp.tokonyadia.repository.TransactionDetailRepository;
 import com.enigmacamp.tokonyadia.repository.TransactionRepository;
 import com.enigmacamp.tokonyadia.service.CustomerService;

@@ -1,4 +1,4 @@
-package com.enigmacamp.tokonyadia.model;
+package com.enigmacamp.tokonyadia.model.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

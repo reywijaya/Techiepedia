@@ -1,8 +1,8 @@
 package com.enigmacamp.tokonyadia.controller;
 
-import com.enigmacamp.tokonyadia.dto.request.CustomerRequest;
-import com.enigmacamp.tokonyadia.dto.response.CustomerResponse;
-import com.enigmacamp.tokonyadia.model.Customer;
+import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
+import com.enigmacamp.tokonyadia.model.entities.Customer;
 import com.enigmacamp.tokonyadia.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,10 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
-import com.enigmacamp.tokonyadia.dto.request.CustomerRequest;
-import com.enigmacamp.tokonyadia.dto.response.CustomerResponse;
-import com.enigmacamp.tokonyadia.model.Customer;
+import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
+import com.enigmacamp.tokonyadia.model.entities.Customer;
 import com.enigmacamp.tokonyadia.repository.CustomerRepository;
 import com.enigmacamp.tokonyadia.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -69,6 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .address(request.getAddress())
+                .deleted(false)
                 .build();
     }
 }

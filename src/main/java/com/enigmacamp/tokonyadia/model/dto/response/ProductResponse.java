@@ -1,4 +1,4 @@
-package com.enigmacamp.tokonyadia.dto.response;
+package com.enigmacamp.tokonyadia.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

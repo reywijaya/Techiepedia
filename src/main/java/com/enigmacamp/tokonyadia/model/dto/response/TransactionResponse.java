@@ -1,7 +1,7 @@
-package com.enigmacamp.tokonyadia.dto.response;
+package com.enigmacamp.tokonyadia.model.dto.response;
 
-import com.enigmacamp.tokonyadia.model.Customer;
-import com.enigmacamp.tokonyadia.model.TransactionDetail;
+import com.enigmacamp.tokonyadia.model.entities.Customer;
+import com.enigmacamp.tokonyadia.model.entities.TransactionDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

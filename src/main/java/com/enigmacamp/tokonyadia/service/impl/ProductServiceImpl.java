@@ -1,7 +1,7 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
-import com.enigmacamp.tokonyadia.dto.request.ProductRequest;
-import com.enigmacamp.tokonyadia.model.Product;
+import com.enigmacamp.tokonyadia.model.dto.request.ProductRequest;
+import com.enigmacamp.tokonyadia.model.entities.Product;
 import com.enigmacamp.tokonyadia.repository.ProductRepository;
 import com.enigmacamp.tokonyadia.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(request.getName())
                 .price(request.getPrice())
                 .stock(request.getStock())
+                .deleted(false)
                 .build();
     }
 }
