@@ -7,10 +7,9 @@ import com.enigmacamp.tokonyadia.model.Product;
 import java.util.List;
 
 public interface ProductService {
-    ProductResponse createProduct(ProductRequest request);
-    ProductResponse updateProduct(ProductRequest request);
+    Product createProduct(ProductRequest request);
+    Product updateProduct(ProductRequest request);
     void deleteProduct(String id);
-    ProductResponse getProduct(String id);
-    List<ProductResponse> getAllProducts();
+    List<Product> getAllProducts();
     Product getProductById(String id);
 }

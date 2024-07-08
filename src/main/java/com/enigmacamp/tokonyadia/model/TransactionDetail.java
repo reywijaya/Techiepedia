@@ -3,6 +3,7 @@ package com.enigmacamp.tokonyadia.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class TransactionDetail {
 
     @Id
@@ -26,7 +28,4 @@ public class TransactionDetail {
 
     private Long productPrice;
     private Integer qty;
-
-
-
 }

@@ -1,11 +1,10 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
 import com.enigmacamp.tokonyadia.dto.request.ProductRequest;
-import com.enigmacamp.tokonyadia.dto.response.ProductResponse;
 import com.enigmacamp.tokonyadia.model.Product;
 import com.enigmacamp.tokonyadia.repository.ProductRepository;
 import com.enigmacamp.tokonyadia.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,44 +12,24 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     @Override
-    public ProductResponse createProduct(ProductRequest request) {
-
-        Product product = Product.builder()
-                .name(request.getName())
-                .price(request.getPrice())
-                .stock(request.getStock())
-                .build();
-
+    public Product createProduct(ProductRequest request) {
+        Product product = convertProductRequestToProductEntity(request);
         productRepository.save(product);
-
-        return convertToProductResponse(product);
+        return product;
     }
 
     @Override
-    public ProductResponse updateProduct(ProductRequest request) {
-
+    public Product updateProduct(ProductRequest request) {
         findByIdOrThrow(request.getId());
-
-        Product product = Product.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .price(request.getPrice())
-                .stock(request.getStock())
-                .build();
-
+        Product product = convertProductRequestToProductEntity(request);
         productRepository.saveAndFlush(product);
-
-        return convertToProductResponse(product);
+        return product;
     }
 
     @Override
@@ -59,14 +38,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getProduct(String id) {
-        Product product = findByIdOrThrow(id);
-        return convertToProductResponse(product);
-    }
-
-    @Override
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll().stream().map(this::convertToProductResponse).toList();
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
     @Override
@@ -78,19 +51,12 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    private ProductResponse convertToProductResponse(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .stock(product.getStock()).build();
-    }
-
-    private ProductRequest convertToProductRequest(Product product) {
-        return ProductRequest.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .stock(product.getStock()).build();
+    private Product convertProductRequestToProductEntity(ProductRequest request) {
+        return Product.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .build();
     }
 }

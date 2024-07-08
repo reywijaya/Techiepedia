@@ -5,6 +5,7 @@ import com.enigmacamp.tokonyadia.dto.response.CustomerResponse;
 import com.enigmacamp.tokonyadia.model.Customer;
 import com.enigmacamp.tokonyadia.repository.CustomerRepository;
 import com.enigmacamp.tokonyadia.service.CustomerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -15,17 +16,13 @@ import java.util.List;
 
 @Service
 @Qualifier("customer")
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-
     @Override
-    public CustomerResponse addCustomer(CustomerRequest request) {
+    public Customer addCustomer(CustomerRequest request) {
 
         Customer customer = Customer.builder()
                 .name(request.getName())
@@ -35,43 +32,25 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
 
         customerRepository.save(customer);
-
-        return convertToCustomerResponse(customer);
+        return customer;
     }
 
     @Override
-    public CustomerResponse updateCustomer(CustomerRequest request) {
-
+    public Customer updateCustomer(CustomerRequest request) {
         findByIdOrThrow(request.getId());
-
-        Customer customer = Customer.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .address(request.getAddress())
-                .build();
-
+        Customer customer = convertCustomerRequestToCustomerEntity(request);
         customerRepository.saveAndFlush(customer);
-
-        return convertToCustomerResponse(customer);
+        return customer;
     }
 
     @Override
     public void deleteCustomer(String id) {
-        Customer customer = findByIdOrThrow(id);
-        customerRepository.delete(customer);
+        customerRepository.delete(findByIdOrThrow(id));
     }
 
     @Override
-    public CustomerResponse getCustomer(String id) {
-        Customer customer = findByIdOrThrow(id);
-        return convertToCustomerResponse(customer);
-    }
-
-    @Override
-    public List<CustomerResponse> getAllCustomers() {
-        return customerRepository.findAll().stream().map(this::convertToCustomerResponse).toList();
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
     }
 
     @Override
@@ -83,13 +62,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    private CustomerResponse convertToCustomerResponse(Customer customer) {
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .name(customer.getName())
-                .email(customer.getEmail())
-                .phone(customer.getPhone())
-                .address(customer.getAddress()).build();
+    private Customer convertCustomerRequestToCustomerEntity(CustomerRequest request) {
+        return Customer.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .address(request.getAddress())
+                .build();
     }
-
 }
