@@ -5,71 +5,92 @@ import com.enigmacamp.tokonyadia.dto.response.ProductResponse;
 import com.enigmacamp.tokonyadia.model.Product;
 import com.enigmacamp.tokonyadia.repository.ProductRepository;
 import com.enigmacamp.tokonyadia.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Qualifier(value = "product")
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @Override
     public ProductResponse createProduct(ProductRequest request) {
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setStock(request.getStock());
+
+        Product product = Product.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .build();
 
         productRepository.save(product);
 
-        ProductResponse response = new ProductResponse();
-        response.setName(product.getName());
-        response.setPrice(product.getPrice());
-        response.setStock(product.getStock());
-        return response;
+        return convertToProductResponse(product);
     }
 
     @Override
-    public ProductResponse updateProduct(String name, ProductRequest request) {
+    public ProductResponse updateProduct(ProductRequest request) {
 
-        Product product = productRepository.updateProductByNameContainingIgnoreCase(name, request);
+        findByIdOrThrow(request.getId());
 
-        ProductResponse productResponse = new ProductResponse();
-        productResponse.setName(product.getName());
-        productResponse.setPrice(product.getPrice());
-        productResponse.setStock(product.getStock());
+        Product product = Product.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .build();
 
-        return productResponse;
+        productRepository.saveAndFlush(product);
+
+        return convertToProductResponse(product);
     }
 
     @Override
-    public void deleteProduct(String name) {
-        productRepository.deleteByNameContainingIgnoreCase(name);
+    public void deleteProduct(String id) {
+        productRepository.deleteById(id);
     }
 
     @Override
-    public Product getProductByName(String name) {
-        return productRepository.findByNameContainingIgnoreCase(name);
+    public ProductResponse getProduct(String id) {
+        Product product = findByIdOrThrow(id);
+        return convertToProductResponse(product);
     }
 
     @Override
     public List<ProductResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        List<ProductResponse> productResponses = new ArrayList<>();
-        for (Product product : products) {
-            ProductResponse response = new ProductResponse();
-            response.setName(product.getName());
-            response.setPrice(product.getPrice());
-            response.setStock(product.getStock());
-            productResponses.add(response);
-        }
-        return productResponses;
+        return productRepository.findAll().stream().map(this::convertToProductResponse).toList();
+    }
+
+    @Override
+    public Product getProductById(String id) {
+        return findByIdOrThrow(id);
+    }
+
+    private Product findByIdOrThrow(String id) {
+        return productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private ProductResponse convertToProductResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .stock(product.getStock()).build();
+    }
+
+    private ProductRequest convertToProductRequest(Product product) {
+        return ProductRequest.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .stock(product.getStock()).build();
     }
 }

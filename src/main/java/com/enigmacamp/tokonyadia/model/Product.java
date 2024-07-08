@@ -2,13 +2,12 @@ package com.enigmacamp.tokonyadia.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Component
 @Entity
+@Builder
 public class Product {
 
     @Id

@@ -1,15 +1,15 @@
 package com.enigmacamp.tokonyadia.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductResponse {
-
-    @NotBlank
-    private String name;
-    @NotBlank
+    private String id, name;
     private Integer price, stock;
 }

@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class ProductRequest {
-    private String id, name;
-    private Integer price, stock;
+public class TransactionRequest {
+    private String customerId;
+    private List<TransactionDetailRequest> transactionDetailRequests;
 }

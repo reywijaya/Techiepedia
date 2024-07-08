@@ -1,17 +1,15 @@
 package com.enigmacamp.tokonyadia.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Customer {
 
     @Id

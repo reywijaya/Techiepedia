@@ -8,12 +8,9 @@ import java.util.List;
 
 public interface ProductService {
     ProductResponse createProduct(ProductRequest request);
-
-    ProductResponse updateProduct(String name, ProductRequest request);
-
-    void deleteProduct(String name);
-
-    Product getProductByName(String name);
-
+    ProductResponse updateProduct(ProductRequest request);
+    void deleteProduct(String id);
+    ProductResponse getProduct(String id);
     List<ProductResponse> getAllProducts();
+    Product getProductById(String id);
 }
