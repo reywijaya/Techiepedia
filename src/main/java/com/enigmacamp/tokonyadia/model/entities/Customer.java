@@ -1,5 +1,6 @@
 package com.enigmacamp.tokonyadia.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,8 @@ public class Customer {
 
     @Column(nullable = false)
     private String name, email, phone, address;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
-    private Boolean deleted = Boolean.FALSE;
+    private Boolean deleted;
 }

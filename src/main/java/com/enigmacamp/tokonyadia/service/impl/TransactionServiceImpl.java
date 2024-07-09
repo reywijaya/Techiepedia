@@ -1,6 +1,8 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
 import com.enigmacamp.tokonyadia.model.dto.request.TransactionRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
+import com.enigmacamp.tokonyadia.model.dto.response.ProductResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.TransactionResponse;
 import com.enigmacamp.tokonyadia.model.entities.Customer;
 import com.enigmacamp.tokonyadia.model.entities.Product;
@@ -17,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Qualifier("transaction")
@@ -32,16 +36,33 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponse createTransaction(TransactionRequest transactionRequest) {
 
-        Customer customer = customerService.getCustomerById(transactionRequest.getCustomerId());
+        CustomerResponse customerResponse = customerService.getCustomerById(transactionRequest.getCustomerId());
+        Customer customer = Customer.builder()
+                .id(customerResponse.getId())
+                .name(customerResponse.getName())
+                .phone(customerResponse.getPhone())
+                .email(customerResponse.getEmail())
+                .address(customerResponse.getAddress())
+                .build();
 
         Transaction transaction = Transaction.builder()
                 .customer(customer)
+                .date(new Date())
                 .build();
+
+        AtomicReference<Long> totalAmount = new AtomicReference<>(0L);
 
         List<TransactionDetail> transactionDetails =
                 transactionRequest.getTransactionDetailRequests().stream().map(transactionDetailRequest ->
                 {
-                    Product product = productService.getProductById(transactionDetailRequest.getProductId());
+                    ProductResponse response = productService.getProductById(transactionDetailRequest.getProductId());
+                    Product product = Product.builder()
+                            .id(response.getId())
+                            .name(response.getName())
+                            .price(response.getPrice())
+                            .stock(response.getStock())
+                            .build();
+
                     if (product.getStock() - transactionDetailRequest.getQty() < 0) {
                         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
                     }
@@ -53,11 +74,13 @@ public class TransactionServiceImpl implements TransactionService {
                                     .transaction(transaction)
                                     .build();
 
+                    totalAmount.updateAndGet(value -> value + ((long) product.getPrice() * transactionDetailRequest.getQty()));
+
                     return transactionDetailRepository.save(transactionDetail);
                 }).toList();
 
         transaction.setTransactionDetails(transactionDetails);
-        transactionRepository.save(transaction);
+        transactionRepository.saveAndFlush(transaction);
 
         return TransactionResponse.builder()
                 .id(transaction.getId())

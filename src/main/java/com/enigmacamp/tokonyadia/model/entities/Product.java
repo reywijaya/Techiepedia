@@ -19,5 +19,6 @@ public class Product {
 
     @Column(nullable = false)
     private Integer price, stock;
-    private Boolean deleted = Boolean.FALSE;
+    private String category;
+    private Boolean deleted;
 }

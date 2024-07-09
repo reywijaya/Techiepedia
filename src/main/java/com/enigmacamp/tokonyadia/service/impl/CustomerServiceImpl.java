@@ -1,11 +1,14 @@
 package com.enigmacamp.tokonyadia.service.impl;
 
 import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
 import com.enigmacamp.tokonyadia.model.entities.Customer;
 import com.enigmacamp.tokonyadia.repository.CustomerRepository;
 import com.enigmacamp.tokonyadia.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,44 +23,65 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public Customer addCustomer(CustomerRequest request) {
-
-        Customer customer = Customer.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .address(request.getAddress())
-                .build();
-
+    public CustomerResponse addCustomer(CustomerRequest request) {
+        Customer customer = convertCustomerRequestToCustomerEntity(request);
         customerRepository.save(customer);
-        return customer;
+        return convertToCustomerResponse(customer);
     }
 
     @Override
-    public Customer updateCustomer(CustomerRequest request) {
+    public CustomerResponse updateCustomer(CustomerRequest request) {
         findByIdOrThrow(request.getId());
         Customer customer = convertCustomerRequestToCustomerEntity(request);
         customerRepository.saveAndFlush(customer);
-        return customer;
+        return convertToCustomerResponse(customer);
     }
 
     @Override
     public void deleteCustomer(String id) {
-        customerRepository.delete(findByIdOrThrow(id));
+        Customer customer = findByIdOrThrow(id);
+        customer.setDeleted(true);
+        customerRepository.saveAndFlush(customer);
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerResponse> getAllCustomers() {
+        return customerRepository.findAllByDeletedFalse().stream().map(this::convertToCustomerResponse).toList();
     }
 
     @Override
-    public Customer getCustomerById(String id) {
-        return findByIdOrThrow(id);
+    public CustomerResponse getCustomerById(String id) {
+        return convertToCustomerResponse(findByIdOrThrow(id));
+    }
+
+    @Override
+    public void saveAllCustomers(List<CustomerRequest> requests) {
+        requests.stream().map(this::convertCustomerRequestToCustomerEntity).forEach(customerRepository::saveAndFlush);
+    }
+
+    @Override
+    public Page<CustomerResponse> getCustomerPerPage(Pageable pageable) {
+        return convertToPageResponse(customerRepository.findAllByDeletedFalse(pageable));
     }
 
     private Customer findByIdOrThrow(String id) {
-        return customerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        List<Customer> customers = customerRepository.findAllByDeletedFalse();
+        return customers.stream().filter(customer -> customer.getId().equals(id))
+                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private Page<CustomerResponse> convertToPageResponse(Page<Customer> customers) {
+        return customers.map(this::convertToCustomerResponse);
+    }
+
+    private CustomerResponse convertToCustomerResponse(Customer customer) {
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .phone(customer.getPhone())
+                .address(customer.getAddress())
+                .build();
     }
 
     private Customer convertCustomerRequestToCustomerEntity(CustomerRequest request) {
@@ -67,6 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .address(request.getAddress())
+                .birthDate(request.getBirthDate())
                 .deleted(false)
                 .build();
     }
