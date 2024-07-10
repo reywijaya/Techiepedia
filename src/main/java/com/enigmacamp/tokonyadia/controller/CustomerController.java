@@ -1,5 +1,6 @@
 package com.enigmacamp.tokonyadia.controller;
 
+import com.enigmacamp.tokonyadia.constant.APIUrl;
 import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
 import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.PageResponse;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @RestController
 @Qualifier("customer")
-@RequestMapping("/api/v1/customer")
+@RequestMapping(APIUrl.CUSTOMER_API)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CustomerController {
 

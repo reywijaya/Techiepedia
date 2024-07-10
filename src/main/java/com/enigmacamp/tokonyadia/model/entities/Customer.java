@@ -23,4 +23,8 @@ public class Customer {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     private Boolean deleted;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

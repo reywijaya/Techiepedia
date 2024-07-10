@@ -1,4 +1,4 @@
-package com.enigmacamp.tokonyadia.model.dto.response;
+package com.enigmacamp.tokonyadia.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class CommonResponse<T> {
-    private Integer statusCode;
-    private String message;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class AuthRequest<T> {
+    private String username;
+    private String password;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 }

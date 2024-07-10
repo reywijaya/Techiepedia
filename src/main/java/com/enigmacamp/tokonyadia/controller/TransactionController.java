@@ -1,5 +1,6 @@
 package com.enigmacamp.tokonyadia.controller;
 
+import com.enigmacamp.tokonyadia.constant.APIUrl;
 import com.enigmacamp.tokonyadia.model.dto.request.TransactionRequest;
 import com.enigmacamp.tokonyadia.model.dto.response.TransactionResponse;
 import com.enigmacamp.tokonyadia.service.TransactionService;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Qualifier("transaction")
-@RequestMapping("/api/v1/transaction")
+@RequestMapping(APIUrl.TRANSACTION_API)
 @RequiredArgsConstructor
 public class TransactionController {
 
