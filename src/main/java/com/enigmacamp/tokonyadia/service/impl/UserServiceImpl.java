@@ -25,4 +25,15 @@ public class UserServiceImpl implements UserService {
                 .role(user.getRoles().getFirst().getName())
                 .build();
     }
+
+    @Override
+    public ActiveUser loadUserById(String id) throws UsernameNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id));
+        return ActiveUser.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .role(user.getRoles().getFirst().getName())
+                .build();
+    }
 }
