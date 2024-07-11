@@ -19,7 +19,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
     @DeleteMapping("/delete-product")
     public HttpStatus deleteProduct(@RequestParam(name = "id") String id) {
         productService.deleteProduct(id);
@@ -36,25 +36,25 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
     @PostMapping("/add-product")
     public ProductResponse addProduct(@RequestBody ProductRequest request) {
         return productService.createProduct(request);
     }
 
-    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
     @PatchMapping("/update-product")
     public ProductResponse updateProduct(@RequestBody ProductRequest request) {
         return productService.updatePut(request);
     }
 
-    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
     @PatchMapping("/update-stock")
     public ProductResponse updateStock(@RequestBody ProductRequest request) {
         return productService.updatePatch(request);
     }
 
-    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
     @PostMapping("/save-all")
     public HttpStatus saveAllProducts(@RequestBody List<ProductRequest> requests) {
         productService.saveAllProducts(requests);
