@@ -17,7 +17,6 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
     private String name, email, phone, address;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
