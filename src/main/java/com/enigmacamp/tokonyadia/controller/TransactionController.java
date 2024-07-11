@@ -6,6 +6,7 @@ import com.enigmacamp.tokonyadia.model.dto.response.TransactionResponse;
 import com.enigmacamp.tokonyadia.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/add-transaction")
     public TransactionResponse createTransaction(@RequestBody TransactionRequest transactionRequest) {
         return transactionService.createTransaction(transactionRequest);

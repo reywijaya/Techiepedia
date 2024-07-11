@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,38 +26,45 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @PostMapping("/add-customer")
     public CustomerResponse addCustomer(@RequestBody CustomerRequest request) {
         return customerService.addCustomer(request);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/customer")
     public CustomerResponse getCustomer(@RequestParam String id) {
         return customerService.getCustomerById(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/all-customers")
     public List<CustomerResponse> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @PatchMapping("/update-customer")
     public CustomerResponse updateCustomer(@RequestBody CustomerRequest request) {
         return customerService.updateCustomer(request);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @DeleteMapping("/delete-customer")
     public HttpStatus deleteCustomer(@RequestParam String id) {
         customerService.deleteCustomer(id);
         return HttpStatus.OK;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @PostMapping("/save-all")
     public HttpStatus saveAllCustomers(@RequestBody List<CustomerRequest> requests) {
         customerService.saveAllCustomers(requests);
         return HttpStatus.CREATED;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/page-customer")
     public PageResponse<CustomerResponse> getAllCustomersPerPage(
             @RequestParam(defaultValue = "0") int page,

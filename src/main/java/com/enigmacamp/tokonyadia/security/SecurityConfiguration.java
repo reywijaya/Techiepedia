@@ -23,16 +23,20 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
+        http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/product/all-products", "/api/v1/product/product").permitAll()
+                        .requestMatchers("/api/v1/product/**").hasAnyRole("SELLER", "ADMIN")
+                        .requestMatchers("/api/v1/transaction/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/v1/customer/**").hasAnyRole("ADMIN", "CUSTOMER")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
+        return http.build();
     }
 
     @Bean
