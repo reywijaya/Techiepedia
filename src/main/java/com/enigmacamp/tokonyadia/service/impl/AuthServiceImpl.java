@@ -4,14 +4,10 @@ import com.enigmacamp.tokonyadia.model.dto.request.AuthRequest;
 import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
 import com.enigmacamp.tokonyadia.model.dto.response.LoginResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.RegisterResponse;
-import com.enigmacamp.tokonyadia.model.entities.ActiveUser;
-import com.enigmacamp.tokonyadia.model.entities.Role;
-import com.enigmacamp.tokonyadia.model.entities.User;
+import com.enigmacamp.tokonyadia.model.entities.*;
 import com.enigmacamp.tokonyadia.repository.UserRepository;
 import com.enigmacamp.tokonyadia.security.JwtUtil;
-import com.enigmacamp.tokonyadia.service.AuthService;
-import com.enigmacamp.tokonyadia.service.CustomerService;
-import com.enigmacamp.tokonyadia.service.RoleService;
+import com.enigmacamp.tokonyadia.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +32,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final AdminService adminService;
+    private final SellerService sellerService;
 
     @Override
     public LoginResponse login(AuthRequest<String> authRequest) {
@@ -73,6 +71,56 @@ public class AuthServiceImpl implements AuthService {
         requestData.setUser(user);
 
         customerService.addCustomer(requestData);
+
+        return RegisterResponse.builder()
+                .username(user.getUsername())
+                .role(role.getName())
+                .build();
+    }
+
+    @Override
+    public RegisterResponse adminRegistration(AuthRequest<Admin> authRequest) {
+        Role role = roleService.getOrSave(Role.ERole.ADMIN);
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
+
+        User user = User.builder()
+                .username(authRequest.getUsername().toLowerCase())
+                .password(passwordEncoder.encode(authRequest.getPassword()))
+                .roles(roles)
+                .build();
+
+        user = userRepository.saveAndFlush(user);
+
+        var admin = authRequest.getData();
+        admin.setUser(user);
+
+        adminService.createAdmin(admin);
+
+        return RegisterResponse.builder()
+                .username(user.getUsername())
+                .role(role.getName())
+                .build();
+    }
+
+    @Override
+    public RegisterResponse sellerRegistration(AuthRequest<Seller> authRequest) {
+        Role role = roleService.getOrSave(Role.ERole.SELLER);
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
+
+        User user = User.builder()
+                .username(authRequest.getUsername().toLowerCase())
+                .password(passwordEncoder.encode(authRequest.getPassword()))
+                .roles(roles)
+                .build();
+
+        user = userRepository.saveAndFlush(user);
+
+        var seller = authRequest.getData();
+        seller.setUser(user);
+
+        sellerService.createSeller(seller);
 
         return RegisterResponse.builder()
                 .username(user.getUsername())
