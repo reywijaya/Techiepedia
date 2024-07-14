@@ -17,7 +17,8 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String name, email;
+    private String name;
+    private String email;
 
     @OneToOne
     @JoinColumn(name = "user_id")

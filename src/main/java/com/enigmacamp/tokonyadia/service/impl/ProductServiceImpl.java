@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
         return convertToProductResponse(productRepository.saveAndFlush(existingProduct));
     }
 
-    private Product findByIdOrThrow(String id) {
+    Product findByIdOrThrow(String id) {
         List<Product> products = productRepository.findAllByDeletedFalse();
         return products.stream().filter(product -> product.getId().equals(id))
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

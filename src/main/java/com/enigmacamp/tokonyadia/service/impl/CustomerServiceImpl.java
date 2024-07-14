@@ -64,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
         return convertToPageResponse(customerRepository.findAllByDeletedFalse(pageable));
     }
 
-    private Customer findByIdOrThrow(String id) {
+    Customer findByIdOrThrow(String id) {
         List<Customer> customers = customerRepository.findAllByDeletedFalse();
         return customers.stream().filter(customer -> customer.getId().equals(id))
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
