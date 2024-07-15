@@ -4,8 +4,10 @@ import com.enigmacamp.tokonyadia.constant.APIUrl;
 import com.enigmacamp.tokonyadia.model.dto.request.ProductRequest;
 import com.enigmacamp.tokonyadia.model.dto.response.ProductResponse;
 import com.enigmacamp.tokonyadia.service.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(APIUrl.PRODUCT_API)
+@RequestMapping(value = APIUrl.PRODUCT_API, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -37,6 +39,7 @@ public class ProductController {
     }
 
     @PreAuthorize("hasAnyAuthority('SELLER', 'ADMIN')")
+    @SecurityRequirement(name = "Authorization")
     @PostMapping("/add-product")
     public ProductResponse addProduct(@RequestBody ProductRequest request) {
         return productService.createProduct(request);

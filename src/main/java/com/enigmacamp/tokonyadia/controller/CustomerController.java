@@ -5,6 +5,7 @@ import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
 import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.PageResponse;
 import com.enigmacamp.tokonyadia.service.CustomerService;
+import com.enigmacamp.tokonyadia.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final FileStorageService fileStorageService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @PostMapping("/add-customer")
@@ -75,5 +78,11 @@ public class CustomerController {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<CustomerResponse> customerResponsePage = customerService.getCustomerPerPage(pageable);
         return new PageResponse<>(customerResponsePage);
+    }
+
+    @PostMapping("/upload-avatar")
+    public String uploadAvatar(@RequestParam(name = "avatar", defaultValue = "avatar") MultipartFile file) {
+        fileStorageService.storeFile(file);
+        return "Successfully stored file";
     }
 }

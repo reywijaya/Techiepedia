@@ -20,6 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private final AuthTokenFilter authTokenFilter;
+    private static final String[] WHITE_LIST = {
+            "/api/v1/auth/**",
+            "/api/v1/product/all-products",
+            "/api/v1/product/product", "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/api/v1/customer/upload-avatar"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -28,7 +35,7 @@ public class SecurityConfiguration {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/product/all-products", "/api/v1/product/product").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/v1/product/**").hasAnyAuthority("SELLER", "ADMIN")
                         .requestMatchers("/api/v1/transaction/**").hasAuthority("CUSTOMER")
                         .requestMatchers("/api/v1/customer/**").hasAnyAuthority("ADMIN", "CUSTOMER")
