@@ -2,22 +2,31 @@ package com.enigmacamp.tokonyadia.controller;
 
 import com.enigmacamp.tokonyadia.constant.APIUrl;
 import com.enigmacamp.tokonyadia.model.dto.request.CustomerRequest;
+import com.enigmacamp.tokonyadia.model.dto.response.AvatarResponse;
+import com.enigmacamp.tokonyadia.model.dto.response.CommonResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.CustomerResponse;
 import com.enigmacamp.tokonyadia.model.dto.response.PageResponse;
 import com.enigmacamp.tokonyadia.service.CustomerService;
 import com.enigmacamp.tokonyadia.service.FileStorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
@@ -81,8 +90,43 @@ public class CustomerController {
     }
 
     @PostMapping("/upload-avatar")
-    public String uploadAvatar(@RequestParam(name = "avatar", defaultValue = "avatar") MultipartFile file) {
-        fileStorageService.storeFile(file);
-        return "Successfully stored file";
+    public ResponseEntity<CommonResponse<AvatarResponse>> uploadAvatar(@RequestParam(name = "avatar", defaultValue = "avatar") MultipartFile file, HttpServletRequest request) {
+        String id = (String) request.getAttribute("id");
+        String fileName = fileStorageService.storeFile(file, id);
+
+        String fileDownloadUri = "http:localhost:8080" + request.getRequestURI() + "/" + fileName;
+
+        AvatarResponse avatarResponse = AvatarResponse.builder()
+                .url(fileDownloadUri)
+                .name(fileName)
+                .build();
+
+        CommonResponse<AvatarResponse> commonResponse = CommonResponse.<AvatarResponse>builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Successfully uploaded avatar")
+                .data(avatarResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
+    }
+
+    @GetMapping("/upload-avatar/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+        Resource resource = fileStorageService.loadFile(fileName);
+
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String contentType;
+        try {
+            Path filePath = resource.getFile().toPath();
+            contentType = Files.probeContentType(filePath);
+        } catch (IOException e) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(resource);
     }
 }
