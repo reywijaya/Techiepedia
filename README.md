@@ -35,7 +35,7 @@ Welcome to the Techiepedia e-Commerce Platform! This project is designed to faci
 Create a PostgreSQL database and update the application.properties file with your database credentials.
 
 ```properties
-  spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name
+  spring.datasource.url=jdbc:postgresql://localhost:3306/your_database_name
   spring.datasource.username=your_username
   spring.datasource.password=your_password
   spring.jpa.hibernate.ddl-auto=update
